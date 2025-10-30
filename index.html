@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hello World — Customizable Interactive Page</title>
+    <style>
+        :root{
+            --bg:#f6f8fa;
+            --surface:#ffffff;
+            --text:#0b1220;
+            --accent:#0066ff;
+            --muted:#64748b;
+            --radius:12px;
+            --glass: rgba(255,255,255,0.6);
+        }
+
+        [data-theme="dark"]{
+            --bg:#0b1220;
+            --surface: rgba(10,14,20,0.6);
+            --text:#e6eef8;
+            --accent:#66b2ff;
+            --muted:#93a3b8;
+            --glass: rgba(0,0,0,0.45);
+        }
+
+        html,body{
+            height:100%;
+            margin:0;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color:var(--text);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+
+        /* page layout */
+        .app{
+            min-height:100%;
+            display:flex;
+            gap:24px;
+            padding:32px;
+            box-sizing:border-box;
+            align-items:flex-start;
+        }
+
+        /* control panel */
+        .panel{
+            width:360px;
+            max-width:calc(100% - 48px);
+            background: linear-gradient(180deg, var(--glass), rgba(255,255,255,0.05));
+            border-radius:var(--radius);
+            padding:16px;
+            box-shadow: 0 6px 18px rgba(10,14,20,0.12);
+            backdrop-filter: blur(6px);
+            border:1px solid rgba(0,0,0,0.06);
+        }
+
+        .panel h2{
+            margin:4px 0 12px 0;
+            font-size:16px;
+            color:var(--text);
+        }
+
+        .field{
+            display:flex;
+            gap:8px;
+            margin-bottom:12px;
+            align-items:center;
+            flex-wrap:wrap;
+        }
+
+        .field label{
+            width:120px;
+            font-size:13px;
+            color:var(--muted);
+        }
+
+        input[type="text"], select, input[type="number"]{
+            flex:1;
+            padding:8px 10px;
+            border-radius:8px;
+            border:1px solid rgba(10,14,20,0.06);
+            background:var(--surface);
+            color:var(--text);
+            outline:none;
+        }
+
+        input[type="color"]{
+            width:46px;
+            height:36px;
+            padding:0;
+            border:none;
+            background:transparent;
+        }
+
+        .row{
+            display:flex;
+            gap:8px;
+            flex:1;
+            align-items:center;
+        }
+
+        .btn{
+            padding:8px 12px;
+            background:var(--accent);
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        .btn.ghost{
+            background:transparent;
+            color:var(--text);
+            border:1px solid rgba(0,0,0,0.06);
+        }
+
+        /* preview area */
+        .preview{
+            flex:1;
+            min-height:480px;
+            border-radius:var(--radius);
+            padding:40px;
+            box-sizing:border-box;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            position:relative;
+            color:var(--text);
+        }
+
+        .preview-inner{
+            width:100%;
+            max-width:880px;
+            text-align:center;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+            padding:40px;
+            border-radius:16px;
+            box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+            backdrop-filter: blur(4px);
+        }
+
+        h1.preview-title{
+            margin:0 0 12px 0;
+            font-size:48px;
+        }
+
+        p.preview-sub{
+            margin:0;
+            color:var(--muted);
+            font-size:16px;
+        }
+
+        /* background image / overlay handling */
+        .bg-layer{
+            position:absolute;
+            inset:0;
+            z-index:0;
+            background-size:cover;
+            background-position:center;
+            transition:background 300ms ease, opacity 200ms ease;
+        }
+
+        .bg-overlay{
+            position:absolute;
+            inset:0;
+            z-index:1;
+            background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.06));
+            pointer-events:none;
+        }
+
+        .content{
+            position:relative;
+            z-index:2;
+        }
+
+        footer{
+            margin-top:24px;
+            text-align:center;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        /* responsive */
+        @media (max-width:880px){
+            .app{flex-direction:column; padding:18px;}
+            .panel{width:100%;}
+        }
+    </style>
+</head>
+<body>
+    <div class="app" id="app" data-theme="light">
+        <aside class="panel" aria-label="Customizer panel">
+            <h2>Customize Hello World</h2>
+
+            <div class="field">
+                <label for="name">Greeting</label>
+                <div class="row">
+                    <input id="name" type="text" placeholder="Your name or message" value="World" />
+                    <button class="btn" id="applyText">Apply</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="theme">Theme</label>
+                <div class="row">
+                    <select id="theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                    <button class="btn ghost" id="toggleTheme">Toggle</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="accent">Accent</label>
+                <div class="row">
+                    <input id="accent" type="color" value="#0066ff" />
+                    <input id="fontSize" type="number" min="18" max="96" value="48" title="Title font size (px)" />
+                </div>
+            </div>
+
+            <hr/>
+
+            <h2 style="margin-top:6px;font-size:15px;color:var(--muted)">Background</h2>
+
+            <div class="field">
+                <label for="bgType">Type</label>
+                <div class="row">
+                    <select id="bgType">
+                        <option value="color">Color</option>
+                        <option value="gradient">Gradient</option>
+                        <option value="image">Image (URL)</option>
+                        <option value="upload">Upload Image</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="bgControls">
+                <!-- dynamic controls injected here -->
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:12px;">
+                <button class="btn" id="save">Save</button>
+                <button class="btn ghost" id="reset">Reset</button>
+            </div>
+
+            <footer>
+                Settings are stored locally in your browser.
+            </footer>
+        </aside>
+
+        <main class="preview" aria-live="polite">
+            <div class="bg-layer" id="bgLayer" aria-hidden="true"></div>
+            <div class="bg-overlay" id="bgOverlay" aria-hidden="true"></div>
+
+            <div class="content preview-inner">
+                <h1 class="preview-title" id="greeting">Hello, World!</h1>
+                <p class="preview-sub">This is a small interactive demo — customize colors, background and text.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simple DOM helpers and defaults
+        const els = {
+            app: document.getElementById('app'),
+            name: document.getElementById('name'),
+            applyText: document.getElementById('applyText'),
+            greeting: document.getElementById('greeting'),
+            theme: document.getElementById('theme'),
+            toggleTheme: document.getElementById('toggleTheme'),
+            accent: document.getElementById('accent'),
+            fontSize: document.getElementById('fontSize'),
+            bgType: document.getElementById('bgType'),
+            bgControls: document.getElementById('bgControls'),
+            bgLayer: document.getElementById('bgLayer'),
+            bgOverlay: document.getElementById('bgOverlay'),
+            save: document.getElementById('save'),
+            reset: document.getElementById('reset')
+        };
+
+        const defaultState = {
+            name: 'World',
+            theme: 'light',
+            accent: '#0066ff',
+            fontSize: 48,
+            bg: {
+                type: 'color',
+                color: '#f6f8fa',
+                gradA: '#0066ff',
+                gradB: '#66b2ff',
+                gradAngle: 135,
+                imageUrl: '',
+                uploadDataUrl: ''
+            }
+        };
+
+        // load state from localStorage
+        function loadState(){
+            try{
+                const raw = localStorage.getItem('hello.custom');
+                return raw ? JSON.parse(raw) : defaultState;
+            }catch(e){
+                return defaultState;
+            }
+        }
+
+        function saveState(state){
+            localStorage.setItem('hello.custom', JSON.stringify(state));
+        }
+
+        let state = loadState();
+
+        // apply state to UI and preview
+        function applyAll(){
+            // theme
+            els.app.setAttribute('data-theme', state.theme);
+            els.theme.value = state.theme;
+
+            // text
+            els.name.value = state.name;
+            els.greeting.textContent = `Hello, ${state.name}!`;
+
+            // accent & font size
+            els.accent.value = state.accent;
+            els.fontSize.value = state.fontSize;
+            document.documentElement.style.setProperty('--accent', state.accent);
+            els.greeting.style.fontSize = state.fontSize + 'px';
+
+            // background
+            els.bgType.value = state.bg.type;
+            renderBgControls();
+            applyBackground();
+        }
+
+        // apply background according to state.bg
+        function applyBackground(){
+            const b = state.bg;
+            if(b.type === 'color'){
+                els.bgLayer.style.background = b.color;
+                els.bgLayer.style.opacity = '1';
+            } else if(b.type === 'gradient'){
+                const g = `linear-gradient(${b.gradAngle}deg, ${b.gradA}, ${b.gradB})`;
+                els.bgLayer.style.background = g;
+                els.bgLayer.style.opacity = '1';
+            } else if(b.type === 'image'){
+                if(b.imageUrl){
+                    els.bgLayer.style.background = `url("${b.imageUrl}")`;
+                    els.bgLayer.style.opacity = '1';
+                } else {
+                    els.bgLayer.style.background = 'transparent';
+                    els.bgLayer.style.opacity = '0';
+                }
+            } else if(b.type === 'upload'){
+                if(b.uploadDataUrl){
+                    els.bgLayer.style.background = `url("${b.uploadDataUrl}")`;
+                    els.bgLayer.style.opacity = '1';
+                } else {
+                    els.bgLayer.style.background = 'transparent';
+                    els.bgLayer.style.opacity = '0';
+                }
+            }
+        }
+
+        // dynamic background controls
+        function renderBgControls(){
+            const b = state.bg;
+            els.bgControls.innerHTML = '';
+            if(b.type === 'color'){
+                const wrapper = document.createElement('div');
+                wrapper.className = 'field';
+                wrapper.innerHTML = `
+                    <label for="bgColor">Color</label>
+                    <div class="row">
+                        <input id="bgColor" type="color" value="${b.color}" />
+                    </div>`;
+                els.bgControls.appendChild(wrapper);
+                document.getElementById('bgColor').addEventListener('input', e=>{
+                    state.bg.color = e.target.value;
+                    applyBackground();
+                });
+            } else if(b.type === 'gradient'){
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <div class="field">
+                        <label for="gradA">Color A</label>
+                        <div class="row"><input id="gradA" type="color" value="${b.gradA}" /></div>
+                    </div>
+                    <div class="field">
+                        <label for="gradB">Color B</label>
+                        <div class="row"><input id="gradB" type="color" value="${b.gradB}" /></div>
+                    </div>
+                    <div class="field">
+                        <label for="gradAngle">Angle</label>
+                        <div class="row"><input id="gradAngle" type="number" min="0" max="360" value="${b.gradAngle}" /></div>
+                    </div>`;
+                els.bgControls.appendChild(wrapper);
+
+                document.getElementById('gradA').addEventListener('input', e=>{
+                    state.bg.gradA = e.target.value; applyBackground();
+                });
+                document.getElementById('gradB').addEventListener('input', e=>{
+                    state.bg.gradB = e.target.value; applyBackground();
+                });
+                document.getElementById('gradAngle').addEventListener('input', e=>{
+                    state.bg.gradAngle = parseInt(e.target.value)||0; applyBackground();
+                });
+            } else if(b.type === 'image'){
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <div class="field">
+                        <label for="bgUrl">Image URL</label>
+                        <div class="row"><input id="bgUrl" type="text" placeholder="https://..." value="${escapeHtml(b.imageUrl)}" /></div>
+                    </div>
+                    <div class="field">
+                        <label></label>
+                        <div class="row"><button class="btn" id="useUnsplash">Use sample image</button></div>
+                    </div>`;
+                els.bgControls.appendChild(wrapper);
+                document.getElementById('bgUrl').addEventListener('input', e=>{
+                    state.bg.imageUrl = e.target.value.trim();
+                    applyBackground();
+                });
+                document.getElementById('useUnsplash').addEventListener('click', ()=>{
+                    state.bg.imageUrl = 'https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1400&q=80';
+                    renderBgControls(); applyBackground();
+                });
+            } else if(b.type === 'upload'){
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <div class="field">
+                        <label for="upload">Upload</label>
+                        <div class="row"><input id="upload" type="file" accept="image/*" /></div>
+                    </div>
+                    <div class="field">
+                        <label></label>
+                        <div class="row"><button class="btn ghost" id="clearUpload">Clear</button></div>
+                    </div>`;
+                els.bgControls.appendChild(wrapper);
+                const upload = document.getElementById('upload');
+                upload.addEventListener('change', async (e)=>{
+                    const f = e.target.files && e.target.files[0];
+                    if(!f) return;
+                    const reader = new FileReader();
+                    reader.onload = function(ev){
+                        state.bg.uploadDataUrl = ev.target.result;
+                        applyBackground();
+                    };
+                    reader.readAsDataURL(f);
+                });
+                document.getElementById('clearUpload').addEventListener('click', ()=>{
+                    state.bg.uploadDataUrl = '';
+                    applyBackground();
+                });
+            }
+        }
+
+        // escape simple HTML for the value shown in input
+        function escapeHtml(s){
+            return s ? s.replace(/"/g,'&quot;') : '';
+        }
+
+        // wire events
+        els.applyText.addEventListener('click', ()=>{
+            state.name = els.name.value.trim() || 'World';
+            els.greeting.textContent = `Hello, ${state.name}!`;
+        });
+
+        els.toggleTheme.addEventListener('click', ()=>{
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            els.app.setAttribute('data-theme', state.theme);
+            els.theme.value = state.theme;
+        });
+
+        els.theme.addEventListener('change', (e)=>{
+            state.theme = e.target.value;
+            els.app.setAttribute('data-theme', state.theme);
+        });
+
+        els.accent.addEventListener('input', (e)=>{
+            state.accent = e.target.value;
+            document.documentElement.style.setProperty('--accent', state.accent);
+        });
+
+        els.fontSize.addEventListener('input', (e)=>{
+            const v = parseInt(e.target.value) || 48;
+            state.fontSize = v;
+            els.greeting.style.fontSize = v + 'px';
+        });
+
+        els.bgType.addEventListener('change', (e)=>{
+            state.bg.type = e.target.value;
+            renderBgControls();
+            applyBackground();
+        });
+
+        els.save.addEventListener('click', ()=>{
+            saveState(state);
+            // tiny feedback
+            els.save.textContent = 'Saved';
+            setTimeout(()=> els.save.textContent = 'Save', 900);
+        });
+
+        els.reset.addEventListener('click', ()=>{
+            localStorage.removeItem('hello.custom');
+            state = JSON.parse(JSON.stringify(defaultState));
+            applyAll();
+            els.reset.textContent = 'Reset ✓';
+            setTimeout(()=> els.reset.textContent = 'Reset', 900);
+        });
+
+        // keyboard: Enter in name input applies
+        els.name.addEventListener('keydown', (e)=>{
+            if(e.key === 'Enter') { els.applyText.click(); }
+        });
+
+        // initial render
+        applyAll();
+
+        // small accessibility helper: let preview announce changes on load
+        window.addEventListener('load', ()=>{
+            // ensure overlay contrast is slightly tuned
+            els.bgOverlay.style.background = 'linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.04))';
+        });
+
+        // Auto-save periodically (optional)
+        setInterval(()=> saveState(state), 4000);
+    </script>
+</body>
+</html></div>
