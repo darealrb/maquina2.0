@@ -1,214 +1,482 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Your Name — Resume</title>
-    <meta name="description" content="Resume of Your Name — Professional Title" />
+    <title>Second Style - Used Clothes</title>
     <style>
         :root{
-            --bg:#f6f8fb; --card:#ffffff; --muted:#586069; --accent:#0b5fff;
-            --glass: rgba(11,95,255,0.06);
-            --radius:12px;
-            color-scheme: light;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            --bg:#0b0b0b;
+            --accent:#8a2be2;
+            --muted:#f5f5f7;
+            --card:#ffffff;
+            --radius:10px;
+            --shadow:0 10px 30px rgba(0,0,0,0.15);
+            --focus:0 0 0 4px rgba(138,43,226,0.18);
         }
         *{box-sizing:border-box}
-        html,body{height:100%; margin:0; background:var(--bg); color:#0b1220; -webkit-font-smoothing:antialiased;}
-        .container{max-width:1000px; margin:36px auto; padding:28px; display:grid; grid-template-columns: 1fr 340px; gap:24px;}
-        @media (max-width:880px){ .container{grid-template-columns:1fr; padding:18px;} }
-        header.card, section.card, aside.card{background:var(--card); border-radius:var(--radius); padding:20px; box-shadow:0 6px 20px rgba(15,20,30,0.06);}
-        header.card{grid-column:1/-1; display:flex; gap:18px; align-items:center;}
-        .avatar{width:86px; height:86px; border-radius:12px; background:linear-gradient(135deg,var(--glass),#fff); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--accent); font-size:28px; flex-shrink:0;}
-        .intro h1{margin:0; font-size:20px; letter-spacing:-0.2px}
-        .intro p.title{margin:6px 0 0; color:var(--muted); font-size:14px}
-        .contacts{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; font-size:13px; color:var(--muted)}
-        .contacts a{color:inherit; text-decoration:none; border-radius:8px; padding:6px 8px; display:inline-flex; gap:8px; align-items:center}
-        main{display:flex; flex-direction:column; gap:18px}
-        h2.section-title{font-size:14px; margin:0 0 10px; display:flex; justify-content:space-between; align-items:center; color:#162034}
-        .summary{font-size:14px; color:#253244; line-height:1.5; padding-top:6px}
-        .experience .item, .education .item, .project .item{padding:12px 0; border-top:1px solid #f1f3f6}
-        .experience .item:first-child, .education .item:first-child, .project .item:first-child{border-top:0; padding-top:0}
-        .item .meta{font-size:13px; color:var(--muted); display:flex; justify-content:space-between; gap:12px}
-        .item h3{margin:4px 0 6px; font-size:15px}
-        .bullets{margin:8px 0 0; padding-left:18px; color:#26303a; font-size:14px}
-        aside .card{display:flex; flex-direction:column; gap:16px}
-        .skills{display:flex; flex-wrap:wrap; gap:8px}
-        .skill{background:#f3f7ff; color:var(--accent); padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px}
-        .skill .bar{height:8px; background:#e9eefc; border-radius:6px; overflow:hidden; margin-top:8px}
-        .skill .bar > i{display:block; height:100%; background:var(--accent)}
-        .utilities{display:flex; gap:10px; align-items:center}
-        button{background:var(--accent); color:white; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600}
-        .muted{color:var(--muted); font-size:13px}
-        footer{grid-column:1/-1; text-align:center; color:var(--muted); font-size:13px; margin-top:6px}
-        /* Print */
-        @media print{
-            body{background:white}
-            .container{box-shadow:none; padding:0; max-width:100%; margin:0}
-            header.card, aside.card, section.card{box-shadow:none; border-radius:0; page-break-inside:avoid}
-            .container{grid-template-columns:1fr;}
-            button,.utilities{display:none}
+        body{
+            margin:0;
+            font-family:Arial,Helvetica,sans-serif;
+            background:var(--muted);
+            color:#111;
+        }
+
+        /* Global buttons */
+        .btn{
+            display:inline-block;
+            background:var(--accent);
+            color:#fff;
+            padding:12px 16px;
+            border-radius:var(--radius);
+            border:none;
+            cursor:pointer;
+            text-decoration:none;
+            font-weight:600;
+            transition:transform .06s ease, box-shadow .2s ease, background .2s ease;
+            box-shadow:0 6px 16px rgba(138,43,226,0.25);
+        }
+        .btn:hover{ background:#7a22d3 }
+        .btn:active{ transform:translateY(1px) }
+        .btn:focus-visible{ outline:none; box-shadow:var(--focus) }
+
+        .small-btn{
+            background:#222;
+            color:#fff;
+            padding:10px 12px;
+            border-radius:var(--radius);
+            border:1px solid rgba(255,255,255,0.08);
+            cursor:pointer;
+            transition:background .2s ease, box-shadow .2s ease, transform .06s ease;
+        }
+        .small-btn:hover{ background:#2e2e2e }
+        .small-btn:active{ transform:translateY(1px) }
+        .small-btn:focus-visible{ outline:none; box-shadow:var(--focus) }
+
+        /* Friendlier auth modal */
+        body .modal-backdrop{
+            background:rgba(0,0,0,0.6);
+            backdrop-filter:saturate(1.1) blur(2px);
+        }
+        body .modal{
+            background:var(--card);
+            border-radius:16px;
+            padding:22px;
+            max-width:520px;
+            box-shadow:var(--shadow);
+        }
+        #authArea{ display:block }
+        /* Make the login/register toggle look like a segmented control */
+        #authArea > div:first-child{
+            background:#f1e9ff;
+            border:1px solid rgba(138,43,226,0.25);
+            border-radius:12px;
+            padding:6px;
+        }
+        #authArea > div:first-child .small-btn{
+            background:transparent;
+            color:#4b2a91;
+            border:none;
+            flex:1;
+        }
+        #authArea > div:first-child .small-btn:hover{
+            background:rgba(138,43,226,0.12);
+        }
+
+        /* Inputs: larger, clearer, accessible */
+        #modalBackdrop input[type="email"],
+        #modalBackdrop input[type="password"]{
+            width:100%;
+            padding:12px 14px;
+            border:1.5px solid #d7d7dd;
+            border-radius:12px;
+            font-size:1rem;
+            background:#fff;
+            transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+        }
+        #modalBackdrop input::placeholder{ color:#9aa0a6 }
+        #modalBackdrop input:focus{
+            outline:none;
+            border-color:var(--accent);
+            box-shadow:var(--focus);
+            background:#fff;
+        }
+        #modalBackdrop form{ margin-top:6px }
+        #modalBackdrop form > input + input{ margin-top:10px }
+        #modalBackdrop .muted{ color:#666 }
+
+        /* Hide admin hint inside the login form */
+        #loginFormModal .muted{ display:none !important }
+
+        /* Improve close button placement/tap target */
+        #closeModal.small-btn{ padding:8px 12px; border-radius:999px }
+
+        /* Header / layout */
+        header{
+            background:var(--bg);
+            color:var(--card);
+            padding:20px 0;
+        }
+        .container{max-width:1100px;margin:0 auto;padding:0 18px}
+        .brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+        .brand h1{margin:0;font-size:1.6rem;color:var(--accent)}
+        nav a{color:#fff;text-decoration:none;margin-left:14px;padding:8px 10px;border-radius:6px}
+        nav a:hover{background:rgba(255,255,255,0.06)}
+
+        /* Improve focus visibility for accessibility across the site */
+        a:focus-visible, button:focus-visible{ outline:none; box-shadow:var(--focus) }
+
+        /* Respect reduced motion preference */
+        @media (prefers-reduced-motion: reduce){
+            .btn, .small-btn{ transition:none }
+        }
+
+        .hero{
+            background:linear-gradient(180deg, rgba(138,43,226,0.06), transparent);
+            padding:30px 0 18px;
+        }
+        .hero-content{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+        .hero .about{flex:1;min-width:260px}
+        .hero .about p{line-height:1.5;color:#222}
+        .hero .cta{min-width:220px}
+        .btn{
+            display:inline-block;background:var(--accent);color:white;padding:10px 14px;border-radius:6px;border:none;cursor:pointer;text-decoration:none;
+        }
+        .section{padding:22px 0}
+        .product-grid{
+            display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;
+        }
+        .product-card{
+            background:var(--card);padding:12px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.06);
+            display:flex;flex-direction:column;gap:8px;
+        }
+        .product-card img{width:100%;height:180px;object-fit:cover;border-radius:6px}
+        .product-card h3{margin:0;font-size:1.05rem}
+        .product-card p{margin:0;color:#444}
+        .product-actions{margin-top:auto;display:flex;gap:8px;align-items:center}
+        .small-btn{background:#222;color:#fff;padding:8px 10px;border-radius:6px;border:none;cursor:pointer}
+        .admin-panel{display:none;background:var(--card);padding:14px;border-radius:8px;margin-top:12px}
+        .admin-form input,.admin-form textarea,.admin-form select{width:100%;padding:8px;margin:8px 0;border-radius:6px;border:1px solid #ddd}
+        /* modal */
+        .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
+        .modal{background:var(--card);max-width:440px;width:100%;padding:16px;border-radius:8px}
+        .modal h3{margin:0 0 10px}
+        .row{display:flex;gap:8px}
+        .muted{color:#666;font-size:0.95rem}
+        .top-bar{display:flex;align-items:center;gap:14px}
+        .status{color:var(--accent);font-weight:600}
+        @media(max-width:680px){
+            .brand{flex-direction:column;align-items:flex-start;gap:8px}
+            .hero-content{flex-direction:column}
         }
     </style>
 </head>
 <body>
-    <div class="container" role="main">
-        <header class="card" aria-label="Header">
-            <div class="avatar" aria-hidden="true">YN</div>
-            <div class="intro" style="flex:1">
-                <h1>Your Name</h1>
-                <p class="title">Professional Title — e.g. Frontend Engineer / Product Designer</p>
-                <div class="contacts" aria-label="Contact information">
-                    <a href="mailto:you@example.com" title="Email">you@example.com</a>
-                    <a href="tel:+1234567890" title="Phone">+1 (234) 567-890</a>
-                    <a href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener">LinkedIn</a>
-                    <a href="https://github.com/yourusername" target="_blank" rel="noopener">GitHub</a>
+    <header>
+        <div class="container">
+            <div class="brand">
+                <div>
+                    <h1>Second Style</h1>
+                    <div class="muted">Quality used clothes, sustainable fashion</div>
                 </div>
+                <nav>
+                    <a href="#home">Home</a>
+                    <a href="#shop">Shop</a>
+                    <a href="#" id="loginLink">Login / Register</a>
+                </nav>
             </div>
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-                <div class="muted">Location: City, Country</div>
-                <div class="utilities">
-                    <button id="printBtn" type="button" aria-label="Save as PDF">Save / Print</button>
-                    <button id="themeBtn" type="button" aria-label="Toggle theme">Dark</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="home" class="hero section">
+            <div class="hero-content">
+                <div class="about">
+                    <h2>About Second Style</h2>
+                    <p>
+                        Second Style is a small team dedicated to giving pre-loved clothing a second life.
+                        We curate quality, stylish items at affordable prices while promoting sustainable shopping.
+                        Our selection includes vintage jackets, everyday tees, and unique finds for every season.
+                    </p>
+                    <p class="muted">Free returns within 7 days. Secure checkout. Friendly customer support.</p>
                 </div>
-            </div>
-        </header>
-
-        <main>
-            <section class="card summary" aria-labelledby="summary-title">
-                <h2 id="summary-title" class="section-title">Professional Summary</h2>
-                <p>
-                    Concise summary (2–4 sentences) describing your experience, strengths, and what you bring to the role.
-                    Example: "Product-focused frontend engineer with 5+ years building accessible, high-performance web apps. Strong background in React, TypeScript, and design collaboration. Passionate about mentorship and shipping user-centered features."
-                </p>
-            </section>
-
-            <section class="card experience" aria-labelledby="exp-title">
-                <h2 id="exp-title" class="section-title">Experience</h2>
-
-                <div class="item">
-                    <div class="meta">
-                        <div>
-                            <h3>Senior Frontend Engineer — Company Name</h3>
-                            <div class="muted">Jan 2022 — Present · Remote</div>
-                        </div>
-                        <div class="muted">Full-time</div>
+                <div class="cta">
+                    <div class="top-bar">
+                        <div class="status" id="userStatus">Not logged in</div>
                     </div>
-                    <ul class="bullets">
-                        <li>Lead frontend architecture for a major product, improved performance by 40% and reduced bundle size.</li>
-                        <li>Mentored 6+ engineers; introduced a design system and component library in TypeScript + React.</li>
-                        <li>Worked closely with product & design to deliver features used by 200k+ monthly active users.</li>
-                    </ul>
-                </div>
-
-                <div class="item">
-                    <div class="meta">
-                        <div>
-                            <h3>Frontend Engineer — Another Company</h3>
-                            <div class="muted">Aug 2018 — Dec 2021 · On-site</div>
-                        </div>
-                        <div class="muted">Full-time</div>
-                    </div>
-                    <ul class="bullets">
-                        <li>Built responsive web apps using modern JS frameworks and automated CI/CD workflows.</li>
-                        <li>Improved accessibility and internationalization across core flows.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section class="card projects" aria-labelledby="projects-title">
-                <h2 id="projects-title" class="section-title">Selected Projects</h2>
-
-                <div class="project item">
-                    <h3>Project Title — <span class="muted">Role</span></h3>
-                    <div class="muted">Short link or tech stack: React · TypeScript · GraphQL</div>
-                    <p class="bullets">1–2 sentence summary explaining the project's goal and your contributions. Add link: <a href="#" target="_blank" rel="noopener">project.example.com</a></p>
-                </div>
-
-                <div class="project item">
-                    <h3>Open Source / Side Project</h3>
-                    <div class="muted">Tech: Node · Express · Docker</div>
-                    <p class="bullets">Brief notes on impact (stars, adoption, or users) and primary responsibilities.</p>
-                </div>
-            </section>
-
-            <section class="card education" aria-labelledby="edu-title">
-                <h2 id="edu-title" class="section-title">Education</h2>
-                <div class="item">
-                    <div class="meta">
-                        <div>
-                            <h3>Bachelor of Science in Computer Science — University Name</h3>
-                            <div class="muted">2014 — 2018</div>
-                        </div>
-                        <div class="muted">GPA: 3.8 (optional)</div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <aside class="card" aria-label="Sidebar">
-            <div>
-                <h2 class="section-title">Skills</h2>
-                <div class="skills" aria-hidden="false">
-                    <div style="min-width:100%">
-                        <div class="skill">JavaScript</div>
-                        <div class="skill" style="margin-top:8px">
-                            React
-                        </div>
-                        <div class="skill" style="margin-top:8px">TypeScript</div>
-                        <div class="skill" style="margin-top:8px">CSS / UI</div>
+                    <div style="margin-top:12px">
+                        <a class="btn" href="#shop">Start Shopping</a>
+                        <button class="btn" id="openLoginBtn" style="background:#222">Login</button>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div>
-                <h2 class="section-title">Tools & Platforms</h2>
-                <div class="muted" style="display:flex;flex-direction:column;gap:6px">
-                    <span>Git · GitHub · CI/CD</span>
-                    <span>Docker · Kubernetes</span>
-                    <span>Figma · Storybook</span>
-                </div>
+        <section id="shop" class="section">
+            <h2>Shop</h2>
+            <div id="productsList" class="product-grid"></div>
+
+            <div id="adminPanel" class="admin-panel">
+                <h3>Admin Panel</h3>
+                <form id="adminForm" class="admin-form">
+                    <input type="text" id="prodName" placeholder="Product Name" required>
+                    <input type="number" id="prodPrice" placeholder="Price (USD)" step="0.01" required>
+                    <input type="url" id="prodImage" placeholder="Image URL" required>
+                    <select id="prodCondition" required>
+                        <option value="perfect">Perfect</option>
+                        <option value="fine">Fine</option>
+                        <option value="ok">Ok</option>
+                    </select>
+                    <textarea id="prodDesc" placeholder="Description" rows="3" required></textarea>
+                    <div style="display:flex;gap:8px">
+                        <button class="btn" type="submit">Save Product</button>
+                        <button class="small-btn" type="button" id="clearEditBtn">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for login/register -->
+    <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-hidden="true">
+        <div class="modal" role="document">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <h3 id="modalTitle">Login</h3>
+                <button id="closeModal" class="small-btn">Close</button>
             </div>
 
-            <div>
-                <h2 class="section-title">Languages</h2>
-                <div class="muted">
-                    English — Native / Fluent<br>
-                    Spanish — Professional working proficiency
+            <div id="authArea">
+                <div style="display:flex;gap:8px;margin-bottom:10px">
+                    <button class="small-btn" id="switchToLogin">Login</button>
+                    <button class="small-btn" id="switchToRegister">Register</button>
                 </div>
-            </div>
-        </aside>
 
-        <footer>
-            Tip: Update the placeholders (name, contacts, summaries, bullets) to match your real information.
-        </footer>
+                <form id="loginFormModal">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <div style="margin-top:10px;display:flex;gap:8px">
+                        <button class="btn" type="submit">Login</button>
+                        <div class="muted" style="align-self:center;font-size:0.9rem">Admin: admin@admin.com / admin</div>
+                    </div>
+                </form>
+
+                <form id="registerForm" style="display:none">
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <div style="margin-top:10px">
+                        <button class="btn" type="submit">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Small interactivity: print and theme toggle
-        document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
-        const themeBtn = document.getElementById('themeBtn');
-        let dark = false;
-        themeBtn.addEventListener('click', ()=>{
-            dark = !dark;
-            if(dark){
-                document.documentElement.style.setProperty('--bg','#0b1220');
-                document.documentElement.style.setProperty('--card','#071024');
-                document.documentElement.style.setProperty('--muted','#9aa6b2');
-                document.documentElement.style.setProperty('--accent','#40a1ff');
-                document.documentElement.style.setProperty('--glass','rgba(64,161,255,0.06)');
-                document.documentElement.style.setProperty('color-scheme','dark');
-                themeBtn.textContent = 'Light';
-            }else{
-                document.documentElement.style.removeProperty('--bg');
-                document.documentElement.style.removeProperty('--card');
-                document.documentElement.style.removeProperty('--muted');
-                document.documentElement.style.removeProperty('--accent');
-                document.documentElement.style.removeProperty('--glass');
-                document.documentElement.style.setProperty('color-scheme','light');
-                themeBtn.textContent = 'Dark';
+        // admin credentials
+        const adminCredentials = { email: 'admin@admin.com', password: 'admin' };
+
+        // sample products (now include condition)
+        let products = [
+            { id: 1, name: 'Vintage Denim Jacket', price: 49.99, image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=1000&q=80&auto=format&fit=crop', description: 'Classic denim jacket in excellent condition', condition: 'perfect' },
+            { id: 2, name: 'Casual T-Shirt', price: 19.99, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1000&q=80&auto=format&fit=crop', description: 'Comfortable cotton t-shirt', condition: 'fine' }
+        ];
+
+        // user state
+        let users = []; // stored simple users
+        let loggedUser = null; // {email, isAdmin}
+        let pendingBuyId = null;
+        let editProductId = null;
+
+        // elements
+        const productsList = document.getElementById('productsList');
+        const adminPanel = document.getElementById('adminPanel');
+        const userStatus = document.getElementById('userStatus');
+
+        // modal
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const loginLink = document.getElementById('loginLink');
+        const openLoginBtn = document.getElementById('openLoginBtn');
+        const closeModal = document.getElementById('closeModal');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const loginFormModal = document.getElementById('loginFormModal');
+        const registerForm = document.getElementById('registerForm');
+        const modalTitle = document.getElementById('modalTitle');
+
+        // admin form inputs
+        const adminForm = document.getElementById('adminForm');
+        const prodName = document.getElementById('prodName');
+        const prodPrice = document.getElementById('prodPrice');
+        const prodImage = document.getElementById('prodImage');
+        const prodCondition = document.getElementById('prodCondition');
+        const prodDesc = document.getElementById('prodDesc');
+        const clearEditBtn = document.getElementById('clearEditBtn');
+
+        // render
+        function displayProducts(){
+            productsList.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <img src="${p.image}" alt="${escapeHtml(p.name)}">
+                    <h3>${escapeHtml(p.name)}</h3>
+                    <p style="font-weight:600">$${p.price.toFixed(2)}</p>
+                    <p class="muted">Condition: ${escapeHtml(capitalize(p.condition))}</p>
+                    <p>${escapeHtml(p.description)}</p>
+                    <div class="product-actions">
+                        <button class="btn" onclick="buyProduct(${p.id})">Buy Now</button>
+                        ${isAdmin() ? `<button class="small-btn" onclick="editProduct(${p.id})">Edit</button>
+                                                    <button class="small-btn" onclick="deleteProduct(${p.id})">Delete</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function capitalize(s){ return String(s).charAt(0).toUpperCase() + String(s).slice(1); }
+
+        function isAdmin(){ return loggedUser && loggedUser.isAdmin; }
+
+        function updateUI(){
+            if(loggedUser){
+                userStatus.textContent = loggedUser.isAdmin ? `Admin: ${loggedUser.email}` : `User: ${loggedUser.email}`;
+                if(isAdmin()) adminPanel.style.display = 'block'; else adminPanel.style.display = 'none';
+            } else {
+                userStatus.textContent = 'Not logged in';
+                adminPanel.style.display = 'none';
             }
+            displayProducts();
+        }
+
+        // buy flow
+        function buyProduct(id){
+            if(!loggedUser){
+                pendingBuyId = id;
+                showModal('login');
+                return;
+            }
+            // complete purchase - simple alert for demo
+            const prod = products.find(p => p.id === id);
+            alert(`Thank you, ${loggedUser.email}! You purchased "${prod.name}" for $${prod.price.toFixed(2)}.`);
+            pendingBuyId = null;
+        }
+        window.buyProduct = buyProduct; // expose to inline onclick
+
+        // admin product actions
+        function editProduct(id){
+            const p = products.find(x => x.id === id);
+            if(!p) return;
+            editProductId = id;
+            prodName.value = p.name;
+            prodPrice.value = p.price;
+            prodImage.value = p.image;
+            prodCondition.value = p.condition || 'perfect';
+            prodDesc.value = p.description;
+            window.scrollTo({top: adminPanel.offsetTop - 20, behavior: 'smooth'});
+        }
+        window.editProduct = editProduct;
+
+        function deleteProduct(id){
+            if(!confirm('Delete this product?')) return;
+            products = products.filter(p => p.id !== id);
+            displayProducts();
+        }
+        window.deleteProduct = deleteProduct;
+
+        // admin form submit (create or update)
+        adminForm.addEventListener('submit', function(e){
+            e.preventDefault();
+            const name = prodName.value.trim();
+            const price = parseFloat(prodPrice.value);
+            const image = prodImage.value.trim();
+            const condition = prodCondition.value;
+            const desc = prodDesc.value.trim();
+            if(!name || isNaN(price) || !image) return;
+
+            if(editProductId){
+                const p = products.find(x=>x.id===editProductId);
+                if(p){ p.name=name; p.price=price; p.image=image; p.description=desc; p.condition = condition; }
+                editProductId = null;
+            } else {
+                const id = (products.length ? Math.max(...products.map(p=>p.id)) : 0) + 1;
+                products.push({id,name,price,image,description:desc,condition});
+            }
+            adminForm.reset();
+            prodCondition.value = 'perfect';
+            displayProducts();
         });
+
+        clearEditBtn.addEventListener('click', function(){ editProductId = null; adminForm.reset(); prodCondition.value = 'perfect'; });
+
+        // modal controls
+        function showModal(mode='login'){
+            modalBackdrop.style.display = 'flex';
+            modalBackdrop.setAttribute('aria-hidden','false');
+            if(mode==='register'){
+                modalTitle.textContent = 'Create Account';
+                registerForm.style.display='block';
+                loginFormModal.style.display='none';
+            } else {
+                modalTitle.textContent = 'Login';
+                registerForm.style.display='none';
+                loginFormModal.style.display='block';
+            }
+        }
+        function hideModal(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); }
+
+        loginLink.addEventListener('click', (e)=>{ e.preventDefault(); showModal('login'); });
+        openLoginBtn.addEventListener('click', ()=> showModal('login'));
+        closeModal.addEventListener('click', hideModal);
+        switchToLogin.addEventListener('click', ()=> showModal('login'));
+        switchToRegister.addEventListener('click', ()=> showModal('register'));
+
+        // login submit
+        loginFormModal.addEventListener('submit', function(e){
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            if(email === adminCredentials.email && password === adminCredentials.password){
+                loggedUser = { email, isAdmin:true };
+                hideModal();
+                updateUI();
+                alert('Admin login successful');
+                return;
+            }
+            const found = users.find(u => u.email === email && u.password === password);
+            if(found){
+                loggedUser = { email, isAdmin:false };
+                hideModal();
+                updateUI();
+                if(pendingBuyId) { buyProduct(pendingBuyId); }
+                return;
+            }
+            alert('Invalid credentials. If you do not have an account, register first.');
+        });
+
+        // register submit
+        registerForm.addEventListener('submit', function(e){
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            if(!email || !password){ alert('Enter email and password'); return; }
+            if(email === adminCredentials.email){
+                alert('This email is reserved.');
+                return;
+            }
+            if(users.some(u=>u.email===email)){ alert('Account already exists. Login instead.'); return; }
+            users.push({email,password});
+            loggedUser = { email, isAdmin:false };
+            hideModal();
+            updateUI();
+            if(pendingBuyId){ buyProduct(pendingBuyId); }
+        });
+
+        // utility
+        function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+        // init
+        displayProducts();
+        updateUI();
+
+        // close modal on backdrop click
+        modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) hideModal(); });
     </script>
 </body>
 </html>
